@@ -8,7 +8,7 @@ export class UsersService {
   constructor(private usersRepository: UserRepository) {}
 
   async checkUserExists(username: string): Promise<boolean> {
-    const user = await this.usersRepository.findByUsername(username);
+    const user = await this.getUserByUsername(username);
     return !!user;
   }
 
@@ -24,5 +24,9 @@ export class UsersService {
       password: hashedPassword,
     });
     return user;
+  }
+
+  async getUserByUsername(username: string): Promise<User> {
+    return await this.usersRepository.findByUsername(username);
   }
 }

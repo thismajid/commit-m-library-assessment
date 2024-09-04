@@ -2,7 +2,7 @@ import { Controller, Get, UsePipes, ValidationPipe } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { GrpcMethod } from '@nestjs/microservices';
 import {
-  CheckUserExistsRequest,
+  GetUserByUsername,
   CreateUserRequest,
 } from './interfaces/user.interfaces';
 import { from, Observable } from 'rxjs';
@@ -13,9 +13,7 @@ export class UsersController {
 
   @GrpcMethod('UserService', 'CheckUserExists')
   @UsePipes(new ValidationPipe({ transform: true }))
-  checkUserExists(
-    data: CheckUserExistsRequest,
-  ): Observable<{ exists: boolean }> {
+  checkUserExists(data: GetUserByUsername): Observable<{ exists: boolean }> {
     return from(
       this.userService
         .checkUserExists(data.username)
@@ -29,5 +27,13 @@ export class UsersController {
     data: CreateUserRequest,
   ): Observable<{ id: number; username: string }> {
     return from(this.userService.createUser(data));
+  }
+
+  @GrpcMethod('UserService', 'GetUserByUsername')
+  @UsePipes(new ValidationPipe({ transform: true }))
+  getUserByUsername(
+    data: GetUserByUsername,
+  ): Observable<{ id: number; username: string }> {
+    return from(this.userService.getUserByUsername(data.username));
   }
 }

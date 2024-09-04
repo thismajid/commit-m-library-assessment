@@ -1,3 +1,4 @@
+import { User } from '@app/interfaces/user.interface';
 import { Injectable, OnModuleInit, Inject } from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices';
 import { Observable } from 'rxjs';
@@ -11,6 +12,7 @@ interface UserServiceClient {
     username: string;
     password: string;
   }): Observable<any>;
+  getUserByUsername(request: { username: string }): Observable<User>;
 }
 
 @Injectable()
@@ -33,5 +35,9 @@ export class UserService implements OnModuleInit {
     password: string,
   ): Observable<any> {
     return this.userService.createUser({ name, username, password });
+  }
+
+  getUserByUsername(username: string): Observable<User> {
+    return this.userService.getUserByUsername({ username });
   }
 }

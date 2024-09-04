@@ -6,6 +6,8 @@ package user;
 service UserService {
   rpc CheckUserExists (CheckUserExistsRequest) returns (CheckUserExistsResponse) {}
   rpc CreateUser (CreateUserRequest) returns (CreateUserResponse) {}
+  rpc GetUserByUsername (GetUserByUsernameRequest) returns (GetUserByUsernameResponse) {}
+
 }
 
 message CheckUserExistsRequest {
@@ -25,4 +27,16 @@ message CreateUserRequest {
 message CreateUserResponse {
   string id = 1;
   string username = 2;
+}
+
+
+message GetUserByUsernameRequest {
+  string username = 1;
+}
+
+message GetUserByUsernameResponse {
+  int32 id = 1;
+  string name = 2;
+  string username = 3;
+  string password = 4;
 }

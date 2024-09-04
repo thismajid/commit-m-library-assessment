@@ -16,6 +16,11 @@ interface AuthService {
     username: string;
     password: string;
   }): Observable<{ id: number; username: string } | void>;
+
+  login(data: {
+    username: string;
+    password: string;
+  }): Observable<{ accessToken: string }>;
 }
 
 @ApiTags('auth')
@@ -43,6 +48,31 @@ export class AuthController {
       return {
         statusCode: HttpStatus.CREATED,
         message: 'User registered successfully',
+        data: result,
+      };
+    } catch (error) {
+      throw new HttpException(
+        {
+          statusCode: HttpStatus.BAD_REQUEST,
+          message: error.message || 'Registration failed',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  @Post('login')
+  @ApiOperation({ summary: 'Login user' })
+  @ApiResponse({ status: 200, description: 'User login successfully' })
+  @ApiResponse({ status: 400, description: 'Bad request' })
+  async login(@Body() loginData: { username: string; password: string }) {
+    try {
+      const response = this.authService.login(loginData);
+      const result = await lastValueFrom(response);
+
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'User login successfully',
         data: result,
       };
     } catch (error) {

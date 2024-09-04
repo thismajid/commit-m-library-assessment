@@ -1,7 +1,6 @@
 import { Controller } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { GrpcMethod } from '@nestjs/microservices';
-import { RegisterDto } from '@app/dtos/register.dto';
 import { Observable } from 'rxjs';
 
 @Controller()
@@ -19,5 +18,10 @@ export class AuthController {
       data.username,
       data.password,
     );
+  }
+
+  @GrpcMethod('AuthService', 'Login')
+  async login(data: { username: string; password: string }) {
+    return this.authService.login(data);
   }
 }
