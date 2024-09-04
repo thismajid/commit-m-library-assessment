@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  api-gateway:
+    build:
+      context: .
+      dockerfile: ./apps/api-gateway/Dockerfile
+      target: development
+    depends_on:
+      - auth
+    command: sh -c "npm run start:dev api-gateway"
+    ports:
+      - '3000:3000'
+    restart: always
+
+  auth:
+    build:
+      context: .
+      dockerfile: ./apps/auth/Dockerfile
+      target: development
+    command: sh -c "npx prisma migrate deploy --schema apps/auth/prisma/schema.prisma && npx prisma generate --schema apps/auth/prisma/schema.prisma && npm run start:dev auth"
+    restart: always
+    environment:
+      - DATABASE_URL=postgres://postgres:majid123@172.29.224.1:5432/usersdb

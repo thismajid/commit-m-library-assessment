@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+
+package user;
+
+service UserService {
+  rpc CheckUserExists (CheckUserExistsRequest) returns (CheckUserExistsResponse) {}
+  rpc CreateUser (CreateUserRequest) returns (CreateUserResponse) {}
+}
+
+message CheckUserExistsRequest {
+  string username = 1;
+}
+
+message CheckUserExistsResponse {
+  bool exists = 1;
+}
+
+message CreateUserRequest {
+  string name = 1;
+  string username = 2;
+  string password = 3;
+}
+
+message CreateUserResponse {
+  string id = 1;
+  string username = 2;
+}

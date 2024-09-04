@@ -1,0 +1,32 @@
+import { NestFactory } from '@nestjs/core';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { ValidationPipe } from '@nestjs/common';
+import { AppModule } from './app.module';
+import { ConfigService } from '@nestjs/config';
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+
+  const configService = app.get(ConfigService);
+
+  const globalPrefix = configService.get<string>('GLOBAL_PREFIX', 'api');
+
+  app.useGlobalPipes(new ValidationPipe());
+
+  app.setGlobalPrefix(globalPrefix);
+
+  const config = new DocumentBuilder()
+    .setTitle('Library System API')
+    .setDescription('The Library System API description')
+    .setVersion('1.0')
+    .addTag('library')
+    .addBearerAuth()
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('/docs', app, document);
+
+  const port = configService.get<number>('APP_PORT', 3000);
+
+  await app.listen(port);
+}
+bootstrap();
