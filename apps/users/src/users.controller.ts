@@ -48,4 +48,10 @@ export class UsersController {
   async getProfile(data: { id: number }) {
     return this.userService.getProfile(data.id);
   }
+
+  @GrpcMethod('UserService', 'UpdateUserProfile')
+  @UsePipes(new ValidationPipe({ transform: true }))
+  async updateProfile(data: { id: number; name: string }) {
+    return this.userService.updateProfile(data.id, data.name);
+  }
 }

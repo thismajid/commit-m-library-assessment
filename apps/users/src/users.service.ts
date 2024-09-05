@@ -33,4 +33,8 @@ export class UsersService {
   async getProfile(id: number) {
     return await this.usersRepository.findOne(id);
   }
+
+  async updateProfile(id: number, name: string) {
+    return await this.usersRepository.update(id, { name });
+  }
 }
