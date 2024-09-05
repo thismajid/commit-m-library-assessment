@@ -7,7 +7,7 @@ service UserService {
   rpc CheckUserExists (CheckUserExistsRequest) returns (CheckUserExistsResponse) {}
   rpc CreateUser (CreateUserRequest) returns (CreateUserResponse) {}
   rpc GetUserByUsername (GetUserByUsernameRequest) returns (GetUserByUsernameResponse) {}
-
+  rpc GetUserProfile (GetProfileRequest) returns (GetProfileResponse) {}
 }
 
 message CheckUserExistsRequest {
@@ -39,4 +39,15 @@ message GetUserByUsernameResponse {
   string name = 2;
   string username = 3;
   string password = 4;
+}
+
+
+message GetProfileRequest {
+  int32 id = 1;
+}
+
+message GetProfileResponse {
+  int32 id = 1;
+  string username = 2;
+  string name = 3;
 }

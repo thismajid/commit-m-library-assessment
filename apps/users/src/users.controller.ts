@@ -1,4 +1,10 @@
-import { Controller, Get, UsePipes, ValidationPipe } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  UseGuards,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { GrpcMethod } from '@nestjs/microservices';
 import {
@@ -35,5 +41,11 @@ export class UsersController {
     data: GetUserByUsername,
   ): Observable<{ id: number; username: string }> {
     return from(this.userService.getUserByUsername(data.username));
+  }
+
+  @GrpcMethod('UserService', 'GetUserProfile')
+  @UsePipes(new ValidationPipe({ transform: true }))
+  async getProfile(data: { id: number }) {
+    return this.userService.getProfile(data.id);
   }
 }

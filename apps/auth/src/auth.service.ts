@@ -49,4 +49,12 @@ export class AuthService {
   private generateToken(userId: number): string {
     return jwt.sign({ userId }, 'your-secret-key', { expiresIn: '1d' });
   }
+
+  verifyToken(token: string): any {
+    try {
+      return jwt.verify(token, 'your-secret-key');
+    } catch (err) {
+      throw new Error('Invalid token');
+    }
+  }
 }

@@ -1,6 +1,6 @@
 import { Controller } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { GrpcMethod } from '@nestjs/microservices';
+import { GrpcMethod, Payload } from '@nestjs/microservices';
 import { Observable } from 'rxjs';
 
 @Controller()
@@ -23,5 +23,15 @@ export class AuthController {
   @GrpcMethod('AuthService', 'Login')
   async login(data: { username: string; password: string }) {
     return this.authService.login(data);
+  }
+
+  @GrpcMethod('AuthService', 'Authenticate')
+  validateToken(data: { token: string }) {
+    try {
+      const decoded = this.authService.verifyToken(data.token);
+      return { isValid: true, userId: decoded.userId };
+    } catch (err) {
+      return { isValid: false, userId: null };
+    }
   }
 }
