@@ -37,4 +37,9 @@ export class BooksController {
   }) {
     return this.booksService.updateBook(data);
   }
+
+  @GrpcMethod('BookService', 'DeleteBook')
+  async deleteBook(data: { id: number; userId: number }) {
+    return this.booksService.deleteBook(data);
+  }
 }

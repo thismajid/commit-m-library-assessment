@@ -12,6 +12,7 @@ import {
   Post,
   Query,
   Param,
+  Delete,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -74,6 +75,8 @@ interface BookService {
     isAvailable: boolean;
     userId: number;
   } | null>;
+
+  deleteBook(data: { id: number; userId: number }): Observable<null>;
 }
 
 @ApiTags('books')
@@ -161,6 +164,34 @@ export class BookController {
         {
           statusCode: HttpStatus.BAD_REQUEST,
           message: error.message || 'Book update operation failed',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  @Delete(':id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Delete a book' })
+  @ApiResponse({ status: 200, description: 'Book deleted successfully' })
+  async deleteBook(@Req() req, @Param('id') id: number) {
+    try {
+      this.bookService.deleteBook({
+        id,
+        userId: req.user.userId,
+      });
+
+      return {
+        statusCode: HttpStatus.NO_CONTENT,
+        message: 'Book deleted successfully',
+        data: {},
+      };
+    } catch (error) {
+      throw new HttpException(
+        {
+          statusCode: HttpStatus.BAD_REQUEST,
+          message: error.message || 'Book delete operation failed',
         },
         HttpStatus.BAD_REQUEST,
       );

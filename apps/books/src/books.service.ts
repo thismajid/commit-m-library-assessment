@@ -39,13 +39,21 @@ export class BooksService {
   }) {
     const hasBook = await this.checkBookIsForUser(data.id, data.userId);
 
-    console.log(hasBook);
-
     if (!hasBook) {
       throw new BadRequestException();
     }
 
     return await this.bookRepository.update(data.id, data);
+  }
+
+  async deleteBook(data: { id: number; userId: number }) {
+    const hasBook = await this.checkBookIsForUser(data.id, data.userId);
+
+    if (!hasBook) {
+      throw new BadRequestException();
+    }
+
+    return await this.bookRepository.remove(data.id);
   }
 
   private async checkBookIsForUser(id, userId) {
