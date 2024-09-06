@@ -47,4 +47,11 @@ export class BooksController {
   async searchBooks(data: { query: string; page: number; limit: number }) {
     return this.booksService.searchBooks(data);
   }
+
+  @GrpcMethod('BookService', 'BorrowBook')
+  async borrowBook(data: { id: number; userId: number }) {
+    console.log(data);
+
+    return this.booksService.borrowBook(data);
+  }
 }

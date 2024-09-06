@@ -90,6 +90,11 @@ interface BookService {
       },
     ]
   >;
+
+  borrowBook(data: { id: number; userId: number }): Observable<{
+    success: boolean;
+    message: string;
+  }>;
 }
 
 @ApiTags('books')
@@ -229,5 +234,14 @@ export class BookController {
         HttpStatus.BAD_REQUEST,
       );
     }
+  }
+
+  @Post(':id/borrow')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Borrow a book' })
+  @ApiResponse({ status: 200, description: 'Book borrowed successfully' })
+  async borrowBook(@Param('id') id: number, @Body('userId') userId: number) {
+    return this.bookService.borrowBook({ id, userId });
   }
 }

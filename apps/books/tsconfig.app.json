@@ -3,10 +3,9 @@
   "compilerOptions": {
     "declaration": false,
     "outDir": "../../dist/apps/books",
-    "typeRoots": [
-      "../../node_modules/@types",
-      "../../node_modules/@prisma/client"
-    ]
+    "paths": {
+      "@prisma/client/books": ["./apps/books/src/generated/prisma-client-books"]
+    }
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "test", "**/*spec.ts"]

@@ -1,9 +1,13 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { BookRepository } from './repositories/book.repository';
+import { BorrowingRepository } from './repositories/borrowing.repository';
 
 @Injectable()
 export class BooksService {
-  constructor(private bookRepository: BookRepository) {}
+  constructor(
+    private bookRepository: BookRepository,
+    private borrowingRepository: BorrowingRepository,
+  ) {}
 
   async addBook(data: {
     title: string;
@@ -83,6 +87,23 @@ export class BooksService {
       this.bookRepository.count(dbQuery),
     ]);
     return { books, total };
+  }
+
+  async borrowBook(data: { id: number; userId: number }) {
+    const book = await this.bookRepository.findOne(data.id);
+
+    if (!book || !book.isAvailable) {
+      return { success: false, message: 'Book not available' };
+    }
+
+    await this.bookRepository.update(data.id, { isAvailable: false });
+    await this.borrowingRepository.create({
+      bookId: data.id,
+      userId: data.userId,
+      borrowDate: new Date(),
+    });
+
+    return { success: true, message: 'Book borrowed successfully' };
   }
 
   private async checkBookIsForUser(id, userId) {

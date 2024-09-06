@@ -7,6 +7,7 @@ import { PrismaService } from './prisma.service';
 import { ConfigModule } from '@nestjs/config';
 import { join } from 'path';
 import mainConfig from './configs/main.config';
+import { BorrowingRepository } from './repositories/borrowing.repository';
 
 @Module({
   imports: [
@@ -17,6 +18,12 @@ import mainConfig from './configs/main.config';
     }),
   ],
   controllers: [BooksController],
-  providers: [BooksService, PrismaService, BaseRepository, BookRepository],
+  providers: [
+    BooksService,
+    PrismaService,
+    BaseRepository,
+    BookRepository,
+    BorrowingRepository,
+  ],
 })
 export class BooksModule {}

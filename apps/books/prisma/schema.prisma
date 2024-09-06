@@ -7,7 +7,7 @@
 generator client {
   provider      = "prisma-client-js"
   binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
-  output        = "../../../node_modules/@prisma/client/books"
+  output        = "../src/generated/prisma-client-books"
 }
 
 datasource db {
@@ -16,12 +16,22 @@ datasource db {
 }
 
 model Book {
-  id          Int      @id @default(autoincrement())
+  id          Int         @id @default(autoincrement())
   title       String
   author      String
   category    String
-  isAvailable Boolean  @default(false)
+  isAvailable Boolean     @default(false)
   userId      Int // Foreign key reference to a User in the user-service
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  Borrowing   Borrowing[]
+}
+
+model Borrowing {
+  id         Int       @id @default(autoincrement())
+  bookId     Int
+  userId     Int
+  borrowDate DateTime
+  returnDate DateTime?
+  book       Book      @relation(fields: [bookId], references: [id])
 }
