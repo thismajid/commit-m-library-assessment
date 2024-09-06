@@ -59,6 +59,21 @@ interface BookService {
     isAvailable: boolean;
     userId: number;
   }>;
+
+  updateBook(data: {
+    id: number;
+    title: string;
+    author: string;
+    category: string;
+    userId: number;
+  }): Observable<{
+    id: number;
+    title: string;
+    author: string;
+    category: string;
+    isAvailable: boolean;
+    userId: number;
+  } | null>;
 }
 
 @ApiTags('books')
@@ -117,5 +132,38 @@ export class BookController {
       message: 'Fetch book successfully',
       data: await lastValueFrom(response),
     };
+  }
+
+  @Put(':id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Update a book' })
+  @ApiResponse({ status: 200, description: 'Book updated successfully' })
+  async updateBook(
+    @Req() req,
+    @Param('id') id: number,
+    @Body() data: { title: string; author: string; category: string },
+  ) {
+    try {
+      const response = this.bookService.updateBook({
+        id,
+        ...data,
+        userId: req.user.userId,
+      });
+
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Book updated successfully',
+        data: await lastValueFrom(response),
+      };
+    } catch (error) {
+      throw new HttpException(
+        {
+          statusCode: HttpStatus.BAD_REQUEST,
+          message: error.message || 'Book update operation failed',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 }

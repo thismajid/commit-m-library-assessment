@@ -26,4 +26,15 @@ export class BooksController {
   async getBook(data: { id: number }) {
     return this.booksService.getBook(data.id);
   }
+
+  @GrpcMethod('BookService', 'UpdateBook')
+  async updateBook(data: {
+    id: number;
+    title: string;
+    author: string;
+    category: string;
+    userId: number;
+  }) {
+    return this.booksService.updateBook(data);
+  }
 }
