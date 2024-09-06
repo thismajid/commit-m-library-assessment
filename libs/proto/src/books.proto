@@ -8,6 +8,7 @@ service BookService {
   rpc GetBook (GetBookRequest) returns (GetBookResponse) {}
   rpc UpdateBook (UpdateBookRequest) returns (Book) {}
   rpc DeleteBook (DeleteBookRequest) returns (DeleteBookResponse) {}
+  rpc SearchBooks (SearchBooksRequest) returns (ListBooksResponse) {}
 }
 
 message AddBookRequest {
@@ -73,3 +74,9 @@ message DeleteBookRequest {
 }
 
 message DeleteBookResponse {}
+
+message SearchBooksRequest {
+  string query = 1;
+  int32 page = 2;
+  int32 limit = 3;
+}

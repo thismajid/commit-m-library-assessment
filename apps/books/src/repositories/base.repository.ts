@@ -17,8 +17,8 @@ export class BaseRepository<T> {
     return this.prisma[this.entityName].create({ data });
   }
 
-  async findAll(pagination): Promise<T[]> {
-    return this.prisma[this.entityName].findMany(pagination);
+  async findAll(query = {}): Promise<T[]> {
+    return this.prisma[this.entityName].findMany(query);
   }
 
   async findOne(id: number): Promise<T | null> {
@@ -36,7 +36,7 @@ export class BaseRepository<T> {
     return this.prisma[this.entityName].delete({ where: { id } });
   }
 
-  async count(): Promise<T> {
-    return this.prisma[this.entityName].count();
+  async count(query = {}): Promise<T> {
+    return this.prisma[this.entityName].count(query);
   }
 }

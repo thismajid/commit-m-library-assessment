@@ -42,4 +42,9 @@ export class BooksController {
   async deleteBook(data: { id: number; userId: number }) {
     return this.booksService.deleteBook(data);
   }
+
+  @GrpcMethod('BookService', 'SearchBooks')
+  async searchBooks(data: { query: string; page: number; limit: number }) {
+    return this.booksService.searchBooks(data);
+  }
 }

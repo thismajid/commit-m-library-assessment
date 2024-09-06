@@ -77,6 +77,19 @@ interface BookService {
   } | null>;
 
   deleteBook(data: { id: number; userId: number }): Observable<null>;
+
+  searchBooks(data: { query: string; page: number; limit: number }): Observable<
+    [
+      {
+        id: number;
+        title: string;
+        author: string;
+        category: string;
+        isAvailable: boolean;
+        userId: number;
+      },
+    ]
+  >;
 }
 
 @ApiTags('books')
@@ -120,6 +133,26 @@ export class BookController {
     return {
       statusCode: HttpStatus.OK,
       message: 'Books listed successfully',
+      data: await lastValueFrom(response),
+    };
+  }
+
+  @Get('search')
+  @ApiOperation({ summary: 'Search books' })
+  @ApiResponse({
+    status: 200,
+    description: 'Returns a list of books matching the search query',
+  })
+  async searchBooks(
+    @Query('query') query: string,
+    @Query('page') page = 1,
+    @Query('limit') limit = 10,
+  ) {
+    const response = this.bookService.searchBooks({ query, page, limit });
+
+    return {
+      statusCode: HttpStatus.OK,
+      message: 'Books retrievied successfully',
       data: await lastValueFrom(response),
     };
   }

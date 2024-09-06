@@ -56,6 +56,35 @@ export class BooksService {
     return await this.bookRepository.remove(data.id);
   }
 
+  async searchBooks({
+    query,
+    page,
+    limit,
+  }: {
+    query: string;
+    page: number;
+    limit: number;
+  }) {
+    const skip = (page - 1) * limit;
+    const dbQuery = {
+      where: {
+        OR: [
+          { title: { contains: query, mode: 'insensitive' } },
+          { author: { contains: query, mode: 'insensitive' } },
+          { category: { contains: query, mode: 'insensitive' } },
+        ],
+      },
+      skip,
+      take: limit,
+    };
+
+    const [books, total] = await Promise.all([
+      this.bookRepository.findAll(dbQuery),
+      this.bookRepository.count(dbQuery),
+    ]);
+    return { books, total };
+  }
+
   private async checkBookIsForUser(id, userId) {
     return !!(await this.bookRepository.bookIsForUser(id, userId));
   }
