@@ -1,18 +1,16 @@
 import {
   Controller,
   Inject,
-  HttpStatus,
-  HttpException,
   Get,
   Req,
   UseGuards,
   Put,
   Body,
-  Patch,
   Post,
   Query,
   Param,
   Delete,
+  UseInterceptors,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -21,89 +19,13 @@ import {
   ApiBearerAuth,
 } from '@nestjs/swagger';
 import { ClientGrpc } from '@nestjs/microservices';
-import { lastValueFrom, Observable } from 'rxjs';
 import { JwtAuthGuard } from '@app/guards/jwt-auth.guard';
-
-interface BookService {
-  addBook(data: {
-    title: string;
-    author: string;
-    category: string;
-    userId: number;
-  }): Observable<{
-    id: number;
-    title: string;
-    author: string;
-    category: string;
-    isAvailable: boolean;
-    userId: number;
-  }>;
-
-  listBooks(data: { page: number; limit: number }): Observable<
-    [
-      {
-        id: number;
-        title: string;
-        author: string;
-        category: string;
-        isAvailable: boolean;
-        userId: number;
-      },
-    ]
-  >;
-
-  getBook(data: { id: number }): Observable<{
-    id: number;
-    title: string;
-    author: string;
-    category: string;
-    isAvailable: boolean;
-    userId: number;
-  }>;
-
-  updateBook(data: {
-    id: number;
-    title: string;
-    author: string;
-    category: string;
-    userId: number;
-  }): Observable<{
-    id: number;
-    title: string;
-    author: string;
-    category: string;
-    isAvailable: boolean;
-    userId: number;
-  } | null>;
-
-  deleteBook(data: { id: number; userId: number }): Observable<null>;
-
-  searchBooks(data: { query: string; page: number; limit: number }): Observable<
-    [
-      {
-        id: number;
-        title: string;
-        author: string;
-        category: string;
-        isAvailable: boolean;
-        userId: number;
-      },
-    ]
-  >;
-
-  borrowBook(data: { id: number; userId: number }): Observable<{
-    success: boolean;
-    message: string;
-  }>;
-
-  returnBook(data: {
-    id: number;
-    userId: number;
-  }): Observable<{ success: boolean; message: string }>;
-}
+import { GrpcResponseInterceptor } from '@app/interceptors/GrpcResponse.interceptor';
+import { BookService } from '@app/interfaces/book-service.interface';
 
 @ApiTags('books')
 @Controller('books')
+@UseInterceptors(GrpcResponseInterceptor)
 export class BookController {
   private bookService: BookService;
 
@@ -118,33 +40,21 @@ export class BookController {
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Add a new book' })
   @ApiResponse({ status: 201, description: 'Book added successfully' })
-  async addBook(
+  addBook(
     @Req() req,
     @Body() data: { title: string; author: string; category: string },
   ) {
-    const response = this.bookService.addBook({
+    return this.bookService.addBook({
       ...data,
       userId: req.user.userId,
     });
-
-    return {
-      statusCode: HttpStatus.CREATED,
-      message: 'Book created successfully',
-      data: await lastValueFrom(response),
-    };
   }
 
   @Get()
   @ApiOperation({ summary: 'List all books' })
   @ApiResponse({ status: 200, description: 'Returns a list of books' })
-  async listBooks(@Query('page') page = 1, @Query('limit') limit = 10) {
-    const response = this.bookService.listBooks({ page, limit });
-
-    return {
-      statusCode: HttpStatus.OK,
-      message: 'Books listed successfully',
-      data: await lastValueFrom(response),
-    };
+  listBooks(@Query('page') page = 1, @Query('limit') limit = 10) {
+    return this.bookService.listBooks({ page, limit });
   }
 
   @Get('search')
@@ -153,31 +63,19 @@ export class BookController {
     status: 200,
     description: 'Returns a list of books matching the search query',
   })
-  async searchBooks(
+  searchBooks(
     @Query('query') query: string,
     @Query('page') page = 1,
     @Query('limit') limit = 10,
   ) {
-    const response = this.bookService.searchBooks({ query, page, limit });
-
-    return {
-      statusCode: HttpStatus.OK,
-      message: 'Books retrievied successfully',
-      data: await lastValueFrom(response),
-    };
+    return this.bookService.searchBooks({ query, page, limit });
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get a book' })
   @ApiResponse({ status: 200, description: 'Returns a book' })
-  async getBook(@Param('id') id: number) {
-    const response = this.bookService.getBook({ id });
-
-    return {
-      statusCode: HttpStatus.OK,
-      message: 'Fetch book successfully',
-      data: await lastValueFrom(response),
-    };
+  getBook(@Param('id') id: number) {
+    return this.bookService.getBook({ id });
   }
 
   @Put(':id')
@@ -185,32 +83,16 @@ export class BookController {
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Update a book' })
   @ApiResponse({ status: 200, description: 'Book updated successfully' })
-  async updateBook(
+  updateBook(
     @Req() req,
     @Param('id') id: number,
     @Body() data: { title: string; author: string; category: string },
   ) {
-    try {
-      const response = this.bookService.updateBook({
-        id,
-        ...data,
-        userId: req.user.userId,
-      });
-
-      return {
-        statusCode: HttpStatus.OK,
-        message: 'Book updated successfully',
-        data: await lastValueFrom(response),
-      };
-    } catch (error) {
-      throw new HttpException(
-        {
-          statusCode: HttpStatus.BAD_REQUEST,
-          message: error.message || 'Book update operation failed',
-        },
-        HttpStatus.BAD_REQUEST,
-      );
-    }
+    return this.bookService.updateBook({
+      id,
+      ...data,
+      userId: req.user.userId,
+    });
   }
 
   @Delete(':id')
@@ -218,27 +100,11 @@ export class BookController {
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Delete a book' })
   @ApiResponse({ status: 200, description: 'Book deleted successfully' })
-  async deleteBook(@Req() req, @Param('id') id: number) {
-    try {
-      this.bookService.deleteBook({
-        id,
-        userId: req.user.userId,
-      });
-
-      return {
-        statusCode: HttpStatus.NO_CONTENT,
-        message: 'Book deleted successfully',
-        data: {},
-      };
-    } catch (error) {
-      throw new HttpException(
-        {
-          statusCode: HttpStatus.BAD_REQUEST,
-          message: error.message || 'Book delete operation failed',
-        },
-        HttpStatus.BAD_REQUEST,
-      );
-    }
+  deleteBook(@Req() req, @Param('id') id: number) {
+    return this.bookService.deleteBook({
+      id,
+      userId: req.user.userId,
+    });
   }
 
   @Post(':id/borrow')
@@ -246,7 +112,7 @@ export class BookController {
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Borrow a book' })
   @ApiResponse({ status: 200, description: 'Book borrowed successfully' })
-  async borrowBook(@Param('id') id: number, @Body('userId') userId: number) {
+  borrowBook(@Param('id') id: number, @Body('userId') userId: number) {
     return this.bookService.borrowBook({ id, userId });
   }
 
@@ -255,7 +121,7 @@ export class BookController {
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Return a book' })
   @ApiResponse({ status: 200, description: 'Book returned successfully' })
-  async returnBook(@Param('id') id: number, @Body('userId') userId: number) {
+  returnBook(@Param('id') id: number, @Body('userId') userId: number) {
     return this.bookService.returnBook({ id, userId });
   }
 }

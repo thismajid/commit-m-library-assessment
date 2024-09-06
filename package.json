@@ -104,7 +104,9 @@
       "^@app/dtos(|/.*)$": "<rootDir>/libs/dtos/src/$1",
       "^@app/guards(|/.*)$": "<rootDir>/libs/guards/src/$1",
       "^@app/decorators(|/.*)$": "<rootDir>/libs/decorators/src/$1",
-      "^@app/database(|/.*)$": "<rootDir>/libs/database/src/$1"
+      "^@app/database(|/.*)$": "<rootDir>/libs/database/src/$1",
+      "^@app/interceptors(|/.*)$": "<rootDir>/libs/interceptors/src/$1",
+      "^@app/filters(|/.*)$": "<rootDir>/libs/filters/src/$1"
     }
   }
 }

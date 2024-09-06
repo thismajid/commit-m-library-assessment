@@ -3,9 +3,14 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
+import { ResponseWrapperInterceptor } from '@app/interceptors/ResponseWrapper.interceptor';
+import { AllExceptionsFilter } from '@app/filters/AllExceptions.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  app.useGlobalInterceptors(new ResponseWrapperInterceptor());
+  app.useGlobalFilters(new AllExceptionsFilter());
 
   const configService = app.get(ConfigService);
 
