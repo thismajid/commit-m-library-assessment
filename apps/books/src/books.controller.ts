@@ -21,4 +21,9 @@ export class BooksController {
   async listBooks(data: { page: number; limit: number }) {
     return this.booksService.listBooks(data);
   }
+
+  @GrpcMethod('BookService', 'GetBook')
+  async getBook(data: { id: number }) {
+    return this.booksService.getBook(data.id);
+  }
 }

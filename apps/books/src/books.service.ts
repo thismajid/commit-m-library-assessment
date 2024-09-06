@@ -21,4 +21,10 @@ export class BooksService {
     ]);
     return { books, total };
   }
+
+  async getBook(id: number) {
+    console.log(id);
+
+    return await this.bookRepository.findOne(id);
+  }
 }

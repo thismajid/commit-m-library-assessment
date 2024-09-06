@@ -11,6 +11,7 @@ import {
   Patch,
   Post,
   Query,
+  Param,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -49,6 +50,15 @@ interface BookService {
       },
     ]
   >;
+
+  getBook(data: { id: number }): Observable<{
+    id: number;
+    title: string;
+    author: string;
+    category: string;
+    isAvailable: boolean;
+    userId: number;
+  }>;
 }
 
 @ApiTags('books')
@@ -92,6 +102,19 @@ export class BookController {
     return {
       statusCode: HttpStatus.OK,
       message: 'Books listed successfully',
+      data: await lastValueFrom(response),
+    };
+  }
+
+  @Get(':id')
+  @ApiOperation({ summary: 'Get a book' })
+  @ApiResponse({ status: 200, description: 'Returns a book' })
+  async getBook(@Param('id') id: number) {
+    const response = this.bookService.getBook({ id });
+
+    return {
+      statusCode: HttpStatus.OK,
+      message: 'Fetch book successfully',
       data: await lastValueFrom(response),
     };
   }
