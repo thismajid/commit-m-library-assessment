@@ -3,28 +3,16 @@ import {
   Post,
   Body,
   Inject,
-  HttpStatus,
-  HttpException,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { ClientGrpc } from '@nestjs/microservices';
-import { lastValueFrom, Observable } from 'rxjs';
-
-interface AuthService {
-  register(data: {
-    name: string;
-    username: string;
-    password: string;
-  }): Observable<{ id: number; username: string } | void>;
-
-  login(data: {
-    username: string;
-    password: string;
-  }): Observable<{ accessToken: string }>;
-}
+import { GrpcResponseInterceptor } from '@app/interceptors/GrpcResponse.interceptor';
+import { AuthService } from '@app/interfaces/auth.service.interface';
 
 @ApiTags('auth')
 @Controller('auth')
+@UseInterceptors(GrpcResponseInterceptor)
 export class AuthController {
   private authService: AuthService;
 
@@ -38,51 +26,15 @@ export class AuthController {
   @ApiOperation({ summary: 'Register user' })
   @ApiResponse({ status: 201, description: 'User registered successfully' })
   @ApiResponse({ status: 400, description: 'Bad request' })
-  async register(
-    @Body() registerData: { name: string; username: string; password: string },
-  ) {
-    try {
-      const response = this.authService.register(registerData);
-      const result = await lastValueFrom(response);
-
-      return {
-        statusCode: HttpStatus.CREATED,
-        message: 'User registered successfully',
-        data: result,
-      };
-    } catch (error) {
-      throw new HttpException(
-        {
-          statusCode: HttpStatus.BAD_REQUEST,
-          message: error.message || 'Registration failed',
-        },
-        HttpStatus.BAD_REQUEST,
-      );
-    }
+  register(@Body() data: { name: string; username: string; password: string }) {
+    return this.authService.register(data);
   }
 
   @Post('login')
   @ApiOperation({ summary: 'Login user' })
   @ApiResponse({ status: 200, description: 'User login successfully' })
   @ApiResponse({ status: 400, description: 'Bad request' })
-  async login(@Body() loginData: { username: string; password: string }) {
-    try {
-      const response = this.authService.login(loginData);
-      const result = await lastValueFrom(response);
-
-      return {
-        statusCode: HttpStatus.OK,
-        message: 'User login successfully',
-        data: result,
-      };
-    } catch (error) {
-      throw new HttpException(
-        {
-          statusCode: HttpStatus.BAD_REQUEST,
-          message: error.message || 'Registration failed',
-        },
-        HttpStatus.BAD_REQUEST,
-      );
-    }
+  login(@Body() data: { username: string; password: string }) {
+    return this.authService.login(data);
   }
 }
