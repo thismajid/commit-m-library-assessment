@@ -16,4 +16,9 @@ export class BooksController {
   }) {
     return this.booksService.addBook(data);
   }
+
+  @GrpcMethod('BookService', 'ListBooks')
+  async listBooks(data: { page: number; limit: number }) {
+    return this.booksService.listBooks(data);
+  }
 }
