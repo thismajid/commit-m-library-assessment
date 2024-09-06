@@ -5,7 +5,7 @@ import { AuthController } from './auth.controller';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import mainConfig from './configs/main.config';
 import { UserController } from './user.controller';
-import { JwtModule, JwtService } from '@nestjs/jwt';
+import { JwtModule } from '@nestjs/jwt';
 import { BookController } from './book.controller';
 
 @Module({
@@ -27,7 +27,7 @@ import { BookController } from './book.controller';
           options: {
             package: 'auth',
             protoPath: join(__dirname, '../../../libs/proto/src/auth.proto'),
-            url: '0.0.0.0:8001',
+            url: configService.get<string>('mainConfig.AUTH_GRPC_URL'),
           },
         }),
         inject: [ConfigService],
@@ -37,9 +37,9 @@ import { BookController } from './book.controller';
         useFactory: (configService: ConfigService) => ({
           transport: Transport.GRPC,
           options: {
-            package: 'user',
+            package: 'users',
             protoPath: join(__dirname, '../../../libs/proto/src/users.proto'),
-            url: '0.0.0.0:8002',
+            url: configService.get<string>('mainConfig.USERS_GRPC_URL'),
           },
         }),
         inject: [ConfigService],
@@ -49,9 +49,9 @@ import { BookController } from './book.controller';
         useFactory: (configService: ConfigService) => ({
           transport: Transport.GRPC,
           options: {
-            package: 'book',
+            package: 'books',
             protoPath: join(__dirname, '../../../libs/proto/src/books.proto'),
-            url: '0.0.0.0:8003',
+            url: configService.get<string>('mainConfig.BOOKS_GRPC_URL'),
           },
         }),
         inject: [ConfigService],

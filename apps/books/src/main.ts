@@ -15,9 +15,9 @@ async function bootstrap() {
     await NestFactory.createMicroservice<MicroserviceOptions>(BooksModule, {
       transport: Transport.GRPC,
       options: {
-        package: 'book',
+        package: 'books',
         protoPath: join(__dirname, '../../../libs/proto/src/books.proto'),
-        url: '0.0.0.0:8003',
+        url: configService.get<string>('mainConfig.BOOKS_GRPC_URL'),
       },
     });
 

@@ -24,7 +24,7 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
           options: {
             package: 'auth',
             protoPath: join(__dirname, '../../../libs/proto/src/auth.proto'),
-            url: '0.0.0.0:8001',
+            url: configService.get<string>('mainConfig.AUTH_GRPC_URL'),
           },
         }),
         inject: [ConfigService],

@@ -3,20 +3,19 @@ import {
   NestInterceptor,
   ExecutionContext,
   CallHandler,
-  HttpStatus,
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { Response } from '@app/interfaces/response.interface';
+import { IResponse } from '@app/interfaces/response.interface';
 
 @Injectable()
 export class ResponseWrapperInterceptor<T>
-  implements NestInterceptor<T, Response<T>>
+  implements NestInterceptor<T, IResponse<T>>
 {
   intercept(
     context: ExecutionContext,
     next: CallHandler,
-  ): Observable<Response<T>> {
+  ): Observable<IResponse<T>> {
     const ctx = context.switchToHttp();
     const response = ctx.getResponse();
     const request = ctx.getRequest();

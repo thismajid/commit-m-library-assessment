@@ -13,11 +13,7 @@ export class AuthController {
     username: string;
     password: string;
   }): Promise<Observable<{ id: number; username: string } | void>> {
-    return await this.authService.register(
-      data.name,
-      data.username,
-      data.password,
-    );
+    return await this.authService.register(data);
   }
 
   @GrpcMethod('AuthService', 'Login')

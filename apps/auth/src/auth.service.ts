@@ -8,13 +8,13 @@ import * as jwt from 'jsonwebtoken';
 export class AuthService {
   constructor(private readonly userService: UserService) {}
 
-  async register(
-    name: string,
-    username: string,
-    password: string,
-  ): Promise<Observable<{ id: number; username: string } | void>> {
+  async register(data: {
+    name: string;
+    username: string;
+    password: string;
+  }): Promise<Observable<{ id: number; username: string } | void>> {
     const { exists } = await lastValueFrom(
-      this.userService.checkUserExists(username),
+      this.userService.checkUserExists(data.username),
     );
 
     if (exists) {
@@ -22,7 +22,7 @@ export class AuthService {
     }
 
     const user = await lastValueFrom(
-      this.userService.createUser(name, username, password),
+      this.userService.createUser(data.name, data.username, data.password),
     );
 
     return user;

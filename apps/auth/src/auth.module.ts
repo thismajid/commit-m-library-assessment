@@ -21,9 +21,9 @@ import { JwtService } from '@nestjs/jwt';
         useFactory: (configService: ConfigService) => ({
           transport: Transport.GRPC,
           options: {
-            package: 'user',
+            package: 'users',
             protoPath: join(__dirname, '../../../libs/proto/src/users.proto'),
-            url: '0.0.0.0:8002',
+            url: configService.get<string>('mainConfig.USERS_GRPC_URL'),
           },
         }),
         inject: [ConfigService],
