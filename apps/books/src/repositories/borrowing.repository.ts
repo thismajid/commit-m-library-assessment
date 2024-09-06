@@ -8,4 +8,10 @@ export class BorrowingRepository extends BaseRepository<Borrowing> {
   constructor(protected readonly prisma: PrismaService) {
     super(prisma);
   }
+
+  async findUserBookBorrowing(id, userId) {
+    return this.prisma.borrowing.findFirst({
+      where: { bookId: id, userId, returnDate: null },
+    });
+  }
 }

@@ -106,6 +106,24 @@ export class BooksService {
     return { success: true, message: 'Book borrowed successfully' };
   }
 
+  async returnBook(data: { id: number; userId: number }) {
+    const borrowing = await this.borrowingRepository.findUserBookBorrowing(
+      data.id,
+      data.userId,
+    );
+
+    if (!borrowing) {
+      return { success: false, message: 'Book not borrowed by this user' };
+    }
+
+    await this.bookRepository.update(data.id, { isAvailable: true });
+    await this.borrowingRepository.update(borrowing.id, {
+      returnDate: new Date(),
+    });
+
+    return { success: true, message: 'Book returned successfully' };
+  }
+
   private async checkBookIsForUser(id, userId) {
     return !!(await this.bookRepository.bookIsForUser(id, userId));
   }

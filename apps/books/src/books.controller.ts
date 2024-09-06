@@ -50,8 +50,11 @@ export class BooksController {
 
   @GrpcMethod('BookService', 'BorrowBook')
   async borrowBook(data: { id: number; userId: number }) {
-    console.log(data);
-
     return this.booksService.borrowBook(data);
+  }
+
+  @GrpcMethod('BookService', 'ReturnBook')
+  async returnBook(data: { id: number; userId: number }) {
+    return this.booksService.returnBook(data);
   }
 }
