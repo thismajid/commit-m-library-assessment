@@ -6,6 +6,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import mainConfig from './configs/main.config';
 import { UserController } from './user.controller';
 import { JwtModule, JwtService } from '@nestjs/jwt';
+import { BookController } from './book.controller';
 
 @Module({
   imports: [
@@ -43,8 +44,20 @@ import { JwtModule, JwtService } from '@nestjs/jwt';
         }),
         inject: [ConfigService],
       },
+      {
+        name: 'BOOK_PACKAGE',
+        useFactory: (configService: ConfigService) => ({
+          transport: Transport.GRPC,
+          options: {
+            package: 'book',
+            protoPath: join(__dirname, '../../../libs/proto/src/books.proto'),
+            url: '0.0.0.0:8003',
+          },
+        }),
+        inject: [ConfigService],
+      },
     ]),
   ],
-  controllers: [AuthController, UserController],
+  controllers: [AuthController, UserController, BookController],
 })
 export class AppModule {}

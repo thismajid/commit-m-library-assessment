@@ -53,6 +53,12 @@
       ],
       "@app/decorators/*": [
         "libs/decorators/src/*"
+      ],
+      "@app/database": [
+        "libs/database/src"
+      ],
+      "@app/database/*": [
+        "libs/database/src/*"
       ]
     }
   }
