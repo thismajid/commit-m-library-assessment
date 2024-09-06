@@ -1,36 +1,22 @@
 import {
   Controller,
   Inject,
-  HttpStatus,
-  HttpException,
   Get,
   Req,
   UseGuards,
-  Put,
   Body,
   Patch,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { ClientGrpc } from '@nestjs/microservices';
-import { lastValueFrom, Observable } from 'rxjs';
 import { JwtAuthGuard } from '@app/guards/jwt-auth.guard';
-
-interface UserService {
-  getUserProfile(data: { id: number }): Observable<{
-    id: number;
-    name: string;
-    username: string;
-  } | void>;
-
-  updateUserProfile(data: { id: number; name: string }): Observable<{
-    id: number;
-    name: string;
-    username: string;
-  } | void>;
-}
+import { GrpcResponseInterceptor } from '@app/interceptors/GrpcResponse.interceptor';
+import { UserService } from '@app/interfaces/user-service.interface';
 
 @ApiTags('users')
 @Controller('users')
+@UseInterceptors(GrpcResponseInterceptor)
 export class UserController {
   private userService: UserService;
 
@@ -45,21 +31,10 @@ export class UserController {
   @ApiOperation({ summary: 'User profile' })
   @ApiResponse({ status: 200, description: 'User profile' })
   @ApiResponse({ status: 401, description: 'Bad request' })
-  async profile(@Req() req) {
-    try {
-      const response = this.userService.getUserProfile({
-        id: req.user.userId,
-      });
-      const result = await lastValueFrom(response);
-
-      return {
-        statusCode: HttpStatus.OK,
-        message: 'User fetch profile successfully',
-        data: result,
-      };
-    } catch (error) {
-      console.log(error);
-    }
+  profile(@Req() req) {
+    return this.userService.getUserProfile({
+      id: req.user.userId,
+    });
   }
 
   @Patch('profile')
@@ -67,21 +42,10 @@ export class UserController {
   @ApiOperation({ summary: 'Update user profile' })
   @ApiResponse({ status: 200, description: 'Update user profile successfully' })
   @ApiResponse({ status: 401, description: 'Bad request' })
-  async updateProfile(@Req() req, @Body() data: { name: string }) {
-    try {
-      const response = this.userService.updateUserProfile({
-        id: req.user.userId,
-        name: data.name,
-      });
-      const result = await lastValueFrom(response);
-
-      return {
-        statusCode: HttpStatus.OK,
-        message: 'User updated profile successfully',
-        data: result,
-      };
-    } catch (error) {
-      console.log(error);
-    }
+  updateProfile(@Req() req, @Body() data: { name: string }) {
+    return this.userService.updateUserProfile({
+      id: req.user.userId,
+      name: data.name,
+    });
   }
 }
