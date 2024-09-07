@@ -25,11 +25,12 @@ export class ResponseWrapperInterceptor<T>
         const statusCode = response.statusCode;
         return {
           success: this.isSuccessStatus(statusCode),
-          data: data || null,
+          data: data?.data || null,
           error: this.isSuccessStatus(statusCode) && undefined,
           statusCode,
           timestamp: new Date().toISOString(),
           path: request.url,
+          message: data?.message,
         };
       }),
     );

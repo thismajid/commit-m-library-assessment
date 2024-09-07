@@ -29,12 +29,12 @@ export class UserService implements OnModuleInit {
     return this.userService.checkUserExists({ username });
   }
 
-  createUser(
+  async createUser(
     name: string,
     username: string,
     password: string,
-  ): Observable<any> {
-    return this.userService.createUser({ name, username, password });
+  ): Promise<Observable<any>> {
+    return await this.userService.createUser({ name, username, password });
   }
 
   getUserByUsername(username: string): Observable<User> {

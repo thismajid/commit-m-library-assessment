@@ -46,10 +46,16 @@ message GetProfileRequest {
   int32 id = 1;
 }
 
-message GetProfileResponse {
+message Profile {
   int32 id = 1;
   string username = 2;
   string name = 3;
+}
+
+message GetProfileResponse {
+  bool success = 1;
+  string message = 2;
+  Profile data = 3;
 }
 
 message UpdateProfileRequest {
@@ -58,7 +64,7 @@ message UpdateProfileRequest {
 }
 
 message UpdateProfileResponse {
-  int32 id = 1;
-  string username = 2;
-  string name = 3;
+  bool success = 1;
+  string message = 2;
+  Profile data = 3;
 }

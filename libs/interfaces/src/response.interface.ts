@@ -6,3 +6,9 @@ export interface IResponse<T> {
   timestamp: string;
   path: string;
 }
+
+export interface ServiceResponse<T> {
+  success: boolean;
+  message: string;
+  data?: T;
+}

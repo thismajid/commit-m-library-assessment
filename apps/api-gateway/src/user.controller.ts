@@ -37,7 +37,7 @@ export class UserController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'User profile' })
-  @ApiResponse({ status: 200, description: 'User profile' })
+  @ApiResponse({ status: 200, description: 'User profile fetch successfully' })
   @ApiResponse({ status: 401, description: 'Bad request' })
   profile(@Req() req) {
     return this.userService.getUserProfile({
@@ -49,7 +49,10 @@ export class UserController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Update user profile' })
-  @ApiResponse({ status: 200, description: 'Update user profile successfully' })
+  @ApiResponse({
+    status: 200,
+    description: 'User profile updated successfully',
+  })
   @ApiResponse({ status: 401, description: 'Bad request' })
   @ApiBody({ type: UpdateProfileDto })
   updateProfile(@Req() req, @Body() data: { name: string }) {

@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { BookRepository } from './repositories/book.repository';
 import { BorrowingRepository } from './repositories/borrowing.repository';
 
@@ -44,7 +44,7 @@ export class BooksService {
     const hasBook = await this.checkBookIsForUser(data.id, data.userId);
 
     if (!hasBook) {
-      throw new BadRequestException();
+      return { success: false, message: 'Book not found by this id' };
     }
 
     return await this.bookRepository.update(data.id, data);
@@ -54,7 +54,7 @@ export class BooksService {
     const hasBook = await this.checkBookIsForUser(data.id, data.userId);
 
     if (!hasBook) {
-      throw new BadRequestException();
+      return { success: false, message: 'Book not found by this id' };
     }
 
     return await this.bookRepository.remove(data.id);

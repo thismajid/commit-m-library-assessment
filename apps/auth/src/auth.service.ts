@@ -3,6 +3,7 @@ import { UserService } from './user.service';
 import { lastValueFrom, Observable } from 'rxjs';
 import * as bcrypt from 'bcryptjs';
 import * as jwt from 'jsonwebtoken';
+import { ServiceResponse } from '@app/interfaces/response.interface';
 
 @Injectable()
 export class AuthService {
@@ -12,38 +13,53 @@ export class AuthService {
     name: string;
     username: string;
     password: string;
-  }): Promise<Observable<{ id: number; username: string } | void>> {
+  }): Promise<ServiceResponse<{ id: number; username: string }>> {
     const { exists } = await lastValueFrom(
       this.userService.checkUserExists(data.username),
     );
 
     if (exists) {
-      throw new BadRequestException('User exists');
+      return { success: false, message: 'User already exists' };
     }
 
     const user = await lastValueFrom(
-      this.userService.createUser(data.name, data.username, data.password),
+      await this.userService.createUser(
+        data.name,
+        data.username,
+        data.password,
+      ),
     );
 
-    return user;
+    return {
+      success: true,
+      message: 'User registered successfully',
+      data: user,
+    };
   }
 
-  async login(data: { username: string; password: string }) {
+  async login(data: {
+    username: string;
+    password: string;
+  }): Promise<ServiceResponse<{ accessToken: string }>> {
     const user = await lastValueFrom(
       this.userService.getUserByUsername(data.username),
     );
 
     if (!user) {
-      throw new Error('User not found');
+      return { success: false, message: 'User not found' };
     }
 
     const isPasswordValid = await bcrypt.compare(data.password, user.password);
     if (!isPasswordValid) {
-      throw new Error('Invalid password');
+      return { success: false, message: 'Invalid password' };
     }
 
     const token = this.generateToken(user.id);
-    return { accessToken: token };
+    return {
+      success: true,
+      message: 'Login successful',
+      data: { accessToken: token },
+    };
   }
 
   private generateToken(userId: number): string {

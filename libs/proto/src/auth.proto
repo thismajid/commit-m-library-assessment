@@ -15,7 +15,14 @@ message RegisterRequest {
 }
 
 message RegisterResponse {
-  int32  userId = 1;
+  bool success = 1;
+  string message = 2;
+  UserData data = 3;
+}
+
+message UserData {
+  int32 id = 1;
+  string username = 2;
 }
 
 message LoginRequest {
@@ -24,7 +31,13 @@ message LoginRequest {
 }
 
 message LoginResponse {
-  string  accessToken = 1;
+  bool success = 1;
+  string message = 2;
+  AccessToken data = 3;
+}
+
+message AccessToken {
+  string accessToken = 1;
 }
 
 message ValidateTokenRequest {

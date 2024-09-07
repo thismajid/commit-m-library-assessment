@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
 import { UserRepository } from './repositories/user.repository';
 import { User } from '@app/interfaces/user.interface';
+import { ServiceResponse } from '@app/interfaces/response.interface';
 
 @Injectable()
 export class UsersService {
@@ -30,11 +31,34 @@ export class UsersService {
     return await this.usersRepository.findByUsername(username);
   }
 
-  async getProfile(id: number) {
-    return await this.usersRepository.findOne(id);
+  async getProfile(
+    id: number,
+  ): Promise<ServiceResponse<{ id: number; username: string; name: string }>> {
+    const user = await this.usersRepository.findOne(id);
+    return {
+      success: true,
+      message: 'User profile fetch successfully',
+      data: {
+        id: user.id,
+        username: user.username,
+        name: user.name,
+      },
+    };
   }
 
-  async updateProfile(id: number, name: string) {
-    return await this.usersRepository.update(id, { name });
+  async updateProfile(
+    id: number,
+    name: string,
+  ): Promise<ServiceResponse<{ id: number; username: string; name: string }>> {
+    const updatedUser = await this.usersRepository.update(id, { name });
+    return {
+      success: true,
+      message: 'User profile updated successfully',
+      data: {
+        id: updatedUser.id,
+        username: updatedUser.username,
+        name: updatedUser.name,
+      },
+    };
   }
 }

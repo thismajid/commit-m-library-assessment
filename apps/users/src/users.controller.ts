@@ -1,10 +1,4 @@
-import {
-  Controller,
-  Get,
-  UseGuards,
-  UsePipes,
-  ValidationPipe,
-} from '@nestjs/common';
+import { Controller, UsePipes, ValidationPipe } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { GrpcMethod } from '@nestjs/microservices';
 import {
@@ -12,6 +6,7 @@ import {
   CreateUserRequest,
 } from './interfaces/user.interfaces';
 import { from, Observable } from 'rxjs';
+import { ServiceResponse } from '@app/interfaces/response.interface';
 
 @Controller()
 export class UsersController {
@@ -45,13 +40,18 @@ export class UsersController {
 
   @GrpcMethod('UserService', 'GetUserProfile')
   @UsePipes(new ValidationPipe({ transform: true }))
-  async getProfile(data: { id: number }) {
+  async getProfile(data: {
+    id: number;
+  }): Promise<ServiceResponse<{ id: number; username: string; name: string }>> {
     return this.userService.getProfile(data.id);
   }
 
   @GrpcMethod('UserService', 'UpdateUserProfile')
   @UsePipes(new ValidationPipe({ transform: true }))
-  async updateProfile(data: { id: number; name: string }) {
+  async updateProfile(data: {
+    id: number;
+    name: string;
+  }): Promise<ServiceResponse<{ id: number; username: string; name: string }>> {
     return this.userService.updateProfile(data.id, data.name);
   }
 }
