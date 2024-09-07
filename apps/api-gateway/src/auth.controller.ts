@@ -5,10 +5,11 @@ import {
   Inject,
   UseInterceptors,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 import { ClientGrpc } from '@nestjs/microservices';
 import { GrpcResponseInterceptor } from '@app/interceptors/GrpcResponse.interceptor';
 import { AuthService } from '@app/interfaces/auth.service.interface';
+import { LoginDto, RegisterDto } from '@app/dtos/auth.dto';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -26,6 +27,7 @@ export class AuthController {
   @ApiOperation({ summary: 'Register user' })
   @ApiResponse({ status: 201, description: 'User registered successfully' })
   @ApiResponse({ status: 400, description: 'Bad request' })
+  @ApiBody({ type: RegisterDto })
   register(@Body() data: { name: string; username: string; password: string }) {
     return this.authService.register(data);
   }
@@ -34,6 +36,7 @@ export class AuthController {
   @ApiOperation({ summary: 'Login user' })
   @ApiResponse({ status: 200, description: 'User login successfully' })
   @ApiResponse({ status: 400, description: 'Bad request' })
+  @ApiBody({ type: LoginDto })
   login(@Body() data: { username: string; password: string }) {
     return this.authService.login(data);
   }
