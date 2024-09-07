@@ -8,11 +8,18 @@ import {
   Patch,
   UseInterceptors,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBody,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { ClientGrpc } from '@nestjs/microservices';
 import { JwtAuthGuard } from '@app/guards/jwt-auth.guard';
 import { GrpcResponseInterceptor } from '@app/interceptors/GrpcResponse.interceptor';
 import { UserService } from '@app/interfaces/user-service.interface';
+import { UpdateProfileDto } from '@app/dtos/users.dto';
 
 @ApiTags('users')
 @Controller('users')
@@ -28,6 +35,7 @@ export class UserController {
 
   @Get('profile')
   @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'User profile' })
   @ApiResponse({ status: 200, description: 'User profile' })
   @ApiResponse({ status: 401, description: 'Bad request' })
@@ -39,9 +47,11 @@ export class UserController {
 
   @Patch('profile')
   @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Update user profile' })
   @ApiResponse({ status: 200, description: 'Update user profile successfully' })
   @ApiResponse({ status: 401, description: 'Bad request' })
+  @ApiBody({ type: UpdateProfileDto })
   updateProfile(@Req() req, @Body() data: { name: string }) {
     return this.userService.updateUserProfile({
       id: req.user.userId,
