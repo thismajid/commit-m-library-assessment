@@ -1,24 +1,95 @@
-version: '3.8'
-
 services:
   api-gateway:
     build:
       context: .
       dockerfile: ./apps/api-gateway/Dockerfile
-      target: development
-    depends_on:
-      - auth
-    command: sh -c "npm run start:dev api-gateway"
+    environment:
+      - NODE_ENV=production
+      - APP_HOST=localhost
+      - APP_PORT=4000
+      - GLOBAL_PREFIX=api
+      - AUTH_GRPC_URL=localhost:8001
+      - USERS_GRPC_URL=localhost:8002
+      - BOOKS_GRPC_URL=localhost:8003
+      - JWT_SECRET=your-secret
+      - JWT_EXPIRATION=1d
+    volumes:
+      - ./apps/api-gateway:/usr/src/app/apps/api-gateway
+      - ./libs:/usr/src/app/libs
     ports:
       - '3000:3000'
-    restart: always
+    depends_on:
+      - auth
+      - users
+      - books
+    command: ['sh', '-c', 'npm run start:prod api-gateway']
 
   auth:
     build:
       context: .
       dockerfile: ./apps/auth/Dockerfile
-      target: development
-    command: sh -c "npx prisma migrate deploy --schema apps/auth/prisma/schema.prisma && npx prisma generate --schema apps/auth/prisma/schema.prisma && npm run start:dev auth"
-    restart: always
     environment:
-      - DATABASE_URL=postgres://postgres:majid123@172.29.224.1:5432/usersdb
+      - AUTH_GRPC_URL=localhost:8001
+      - USERS_GRPC_URL=localhost:8002
+      - JWT_SECRET=your-secret
+      - JWT_EXPIRATION=1d
+    volumes:
+      - ./apps/auth:/usr/src/app/apps/auth
+      - ./libs:/usr/src/app/libs
+    depends_on:
+      - users
+    command: ['sh', '-c', 'npm run start:prod auth']
+
+  users:
+    build:
+      context: .
+      dockerfile: ./apps/users/Dockerfile
+    environment:
+      - DATABASE_URL=postgresql://postgres:dbpassword@localhost:5433/usersdb?schema=public
+      - AUTH_GRPC_URL=localhost:8001
+      - USERS_GRPC_URL=localhost:8002
+    volumes:
+      - ./apps/users:/usr/src/app/apps/users
+      - ./libs:/usr/src/app/libs
+    depends_on:
+      - postgres
+    command:
+      [
+        'sh',
+        '-c',
+        'npx prisma migrate deploy --schema apps/users/prisma/schema.prisma && npx prisma generate --schema apps/users/prisma/schema.prisma && npm run start:prod users',
+      ]
+
+  books:
+    build:
+      context: .
+      dockerfile: ./apps/books/Dockerfile
+    environment:
+      - DATABASE_URL=postgresql://postgres:dbpassword@localhost:5433/booksdb?schema=public
+      - BOOKS_GRPC_URL=localhost:8003
+    volumes:
+      - ./apps/books:/usr/src/app/apps/books
+      - ./libs:/usr/src/app/libs
+    ports:
+      - '3000:3000'
+    depends_on:
+      - postgres
+    command:
+      [
+        'sh',
+        '-c',
+        'npx prisma migrate deploy --schema apps/books/prisma/schema.prisma && npx prisma generate --schema apps/books/prisma/schema.prisma && npm run start:prod books',
+      ]
+
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: dbpassword
+    ports:
+      - '5433:5432'
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:

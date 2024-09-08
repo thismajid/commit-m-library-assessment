@@ -4,10 +4,10 @@ WORKDIR /usr/src/app
 
 COPY package*.json tsconfig.json nest-cli.json ./
 
-COPY apps/auth/ apps/auth/
+COPY apps/books/ apps/books/
 COPY libs/ libs/
 
-RUN npm ci && npm run build auth
+RUN npm ci && npm run build books
 
 FROM node:alpine AS production
 

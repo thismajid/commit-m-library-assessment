@@ -1,29 +1,21 @@
-FROM node:21.6.0 As development
+FROM node:21.6.0 AS development
 
 WORKDIR /usr/src/app
 
-COPY package*.json ./
-COPY tsconfig.json tsconfig.json
-COPY nest-cli.json nest-cli.json
+COPY package*.json tsconfig.json nest-cli.json ./
 
-COPY apps/api-gateway apps/api-gateway
-COPY libs libs
+COPY apps/api-gateway/ apps/api-gateway/
+COPY libs/ libs/
 
-RUN npm ci
+RUN npm ci && npm run build api-gateway
 
-RUN npm run build api-gateway
-
-FROM node:alpine as production
-
-ARG NODE_ENV=production
-ENV NODE_ENV=${NODE_ENV}
+FROM node:alpine AS production
 
 WORKDIR /usr/src/app
 
-COPY package*.json ./
-
-RUN npm ci
+COPY --from=development /usr/src/app/package*.json ./
+RUN npm ci --only=production
 
 COPY --from=development /usr/src/app/dist ./dist
 
-CMD ["node", "dist/apps/api-gateway/main"]
+CMD ["node", "dist/main"]
