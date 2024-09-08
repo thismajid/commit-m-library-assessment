@@ -2,7 +2,6 @@ import {
   Controller,
   Inject,
   Get,
-  Req,
   Put,
   Body,
   Post,
@@ -25,6 +24,7 @@ import {
   ApiSearchBooks,
   ApiUpdateBook,
 } from './decorators';
+import { CurrentUser } from '@app/decorators/current-user.decorator';
 
 @ApiTags('books')
 @Controller('books')
@@ -41,12 +41,12 @@ export class BookController {
   @Post()
   @ApiAddBook()
   addBook(
-    @Req() req,
+    @CurrentUser() userId: number,
     @Body() data: { title: string; author: string; category: string },
   ) {
     return this.bookService.addBook({
       ...data,
-      userId: req.user.userId,
+      userId,
     });
   }
 
@@ -94,13 +94,13 @@ export class BookController {
 
   @Post(':id/borrow')
   @ApiBorrowBook()
-  borrowBook(@Param('id') id: number, @Body('userId') userId: number) {
+  borrowBook(@CurrentUser() userId: number, @Param('id') id: number) {
     return this.bookService.borrowBook({ id, userId });
   }
 
   @Post(':id/return')
   @ApiReturnBook()
-  returnBook(@Param('id') id: number, @Body('userId') userId: number) {
+  returnBook(@CurrentUser() userId: number, @Param('id') id: number) {
     return this.bookService.returnBook({ id, userId });
   }
 }
