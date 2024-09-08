@@ -53,7 +53,6 @@ export class BooksController {
     title: string;
     author: string;
     category: string;
-    userId: number;
   }): Promise<ServiceResponse<Book>> {
     const result = await this.booksService.updateBook(data);
     return {

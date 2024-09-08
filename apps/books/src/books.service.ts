@@ -47,18 +47,17 @@ export class BooksService {
     title: string;
     author: string;
     category: string;
-    userId: number;
   }): Promise<Book> {
-    const hasBook = await this.checkBookIsForUser(data.id, data.userId);
+    const bookFound = await this.getBook(data.id);
 
-    if (!hasBook) {
+    if (!bookFound) {
       throw new NotFoundException('Book not found by this id');
     }
 
     return await this.bookRepository.update(data.id, data);
   }
 
-  async deleteBook(data: { id: number; userId: number }): Promise<void> {
+  async deleteBook(data: { id: number }): Promise<void> {
     const bookFound = await this.getBook(data.id);
 
     if (!bookFound) {

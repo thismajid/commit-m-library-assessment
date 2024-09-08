@@ -75,7 +75,6 @@ message UpdateBookRequest {
   string title = 2;
   string author = 3;
   string category = 4;
-  int32 userId = 5;
 }
 
 message UpdateBookResponse {
@@ -86,7 +85,6 @@ message UpdateBookResponse {
 
 message DeleteBookRequest {
   int32 id = 1;
-  int32 userId = 2;
 }
 
 message DeleteBookResponse {

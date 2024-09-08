@@ -75,23 +75,20 @@ export class BookController {
   @Put(':id')
   @ApiUpdateBook()
   updateBook(
-    @Req() req,
     @Param('id') id: number,
     @Body() data: { title: string; author: string; category: string },
   ) {
     return this.bookService.updateBook({
       id,
       ...data,
-      userId: req.user.userId,
     });
   }
 
   @Delete(':id')
   @ApiDeleteBook()
-  deleteBook(@Req() req, @Param('id') id: number) {
+  deleteBook(@Param('id') id: number) {
     return this.bookService.deleteBook({
       id,
-      userId: req.user.userId,
     });
   }
 

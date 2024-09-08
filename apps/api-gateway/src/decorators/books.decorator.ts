@@ -89,8 +89,8 @@ export const ApiUpdateBook = () =>
     ApiOperation({ summary: 'Update a book' }),
     ApiParam({ name: 'id', type: 'string', description: 'The ID of the book' }),
     ApiResponse({ status: 200, description: 'Book updated successfully' }),
-    ApiBadRequestResponse({
-      status: 400,
+    ApiNotFoundResponse({
+      status: 404,
       description: 'Book not found by this id',
     }),
     ApiBody({ type: UpdateBookDto }),

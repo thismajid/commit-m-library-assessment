@@ -21,12 +21,10 @@ export interface UpdateBookInput {
   title: string;
   author: string;
   category: string;
-  userId: number;
 }
 
 export interface DeleteBookInput {
   id: number;
-  userId: number;
 }
 
 export interface SearchBooksInput {
