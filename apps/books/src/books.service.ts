@@ -59,9 +59,9 @@ export class BooksService {
   }
 
   async deleteBook(data: { id: number; userId: number }): Promise<void> {
-    const hasBook = await this.checkBookIsForUser(data.id, data.userId);
+    const bookFound = await this.getBook(data.id);
 
-    if (!hasBook) {
+    if (!bookFound) {
       throw new NotFoundException('Book not found by this id');
     }
 

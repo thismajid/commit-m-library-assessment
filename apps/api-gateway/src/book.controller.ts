@@ -3,7 +3,6 @@ import {
   Inject,
   Get,
   Req,
-  UseGuards,
   Put,
   Body,
   Post,
@@ -12,25 +11,20 @@ import {
   Delete,
   UseInterceptors,
 } from '@nestjs/common';
-import {
-  ApiTags,
-  ApiOperation,
-  ApiResponse,
-  ApiBearerAuth,
-  ApiBody,
-  ApiQuery,
-  ApiParam,
-} from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 import { ClientGrpc } from '@nestjs/microservices';
 import { GrpcResponseInterceptor } from '@app/interceptors/GrpcResponse.interceptor';
 import { BookService } from '@app/interfaces/book-service.interface';
 import {
-  AddBookDto,
-  BorrowBookDto,
-  ReturnBookDto,
-  UpdateBookDto,
-} from '@app/dtos/books.dto';
-import { JwtAdminAuthGuard, JwtAuthGuard } from './guards';
+  ApiAddBook,
+  ApiBorrowBook,
+  ApiDeleteBook,
+  ApiGetBook,
+  ApiListBook,
+  ApiReturnBook,
+  ApiSearchBooks,
+  ApiUpdateBook,
+} from './decorators';
 
 @ApiTags('books')
 @Controller('books')
@@ -45,11 +39,7 @@ export class BookController {
   }
 
   @Post()
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Add a new book' })
-  @ApiResponse({ status: 201, description: 'Book added successfully' })
-  @ApiBody({ type: AddBookDto })
+  @ApiAddBook()
   addBook(
     @Req() req,
     @Body() data: { title: string; author: string; category: string },
@@ -61,48 +51,13 @@ export class BookController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'List all books' })
-  @ApiResponse({ status: 200, description: 'Books retrieved successfully' })
-  @ApiQuery({
-    name: 'page',
-    required: false,
-    type: Number,
-    description: 'Page number for pagination',
-  })
-  @ApiQuery({
-    name: 'limit',
-    required: false,
-    type: Number,
-    description: 'Number of items per page',
-  })
+  @ApiListBook()
   listBooks(@Query('page') page = 1, @Query('limit') limit = 10) {
     return this.bookService.listBooks({ page, limit });
   }
 
   @Get('search')
-  @ApiOperation({ summary: 'Search books' })
-  @ApiResponse({
-    status: 200,
-    description: 'Books searching retrieved successfully',
-  })
-  @ApiQuery({
-    name: 'query',
-    required: false,
-    type: String,
-    description: 'Search terms of the book',
-  })
-  @ApiQuery({
-    name: 'page',
-    required: false,
-    type: Number,
-    description: 'Page number for pagination',
-  })
-  @ApiQuery({
-    name: 'limit',
-    required: false,
-    type: Number,
-    description: 'Number of items per page',
-  })
+  @ApiSearchBooks()
   searchBooks(
     @Query('query') query: string,
     @Query('page') page = 1,
@@ -112,21 +67,13 @@ export class BookController {
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get a book' })
-  @ApiParam({ name: 'id', type: 'string', description: 'The ID of the book' })
-  @ApiResponse({ status: 200, description: 'Book retrieved successfully' })
+  @ApiGetBook()
   getBook(@Param('id') id: number) {
     return this.bookService.getBook({ id });
   }
 
   @Put(':id')
-  @UseGuards(JwtAdminAuthGuard)
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Update a book' })
-  @ApiParam({ name: 'id', type: 'string', description: 'The ID of the book' })
-  @ApiResponse({ status: 200, description: 'Book updated successfully' })
-  @ApiResponse({ status: 400, description: 'Book not found by this id' })
-  @ApiBody({ type: UpdateBookDto })
+  @ApiUpdateBook()
   updateBook(
     @Req() req,
     @Param('id') id: number,
@@ -140,11 +87,7 @@ export class BookController {
   }
 
   @Delete(':id')
-  @UseGuards(JwtAdminAuthGuard)
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Delete a book' })
-  @ApiParam({ name: 'id', type: 'string', description: 'The ID of the book' })
-  @ApiResponse({ status: 200, description: 'Book deleted successfully' })
+  @ApiDeleteBook()
   deleteBook(@Req() req, @Param('id') id: number) {
     return this.bookService.deleteBook({
       id,
@@ -153,22 +96,13 @@ export class BookController {
   }
 
   @Post(':id/borrow')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Borrow a book' })
-  @ApiParam({ name: 'id', type: 'string', description: 'The ID of the book' })
-  @ApiResponse({ status: 200, description: 'Book borrowed successfully' })
-  @ApiBody({ type: BorrowBookDto })
+  @ApiBorrowBook()
   borrowBook(@Param('id') id: number, @Body('userId') userId: number) {
     return this.bookService.borrowBook({ id, userId });
   }
 
   @Post(':id/return')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Return a book' })
-  @ApiResponse({ status: 200, description: 'Book returned successfully' })
-  @ApiBody({ type: ReturnBookDto })
+  @ApiReturnBook()
   returnBook(@Param('id') id: number, @Body('userId') userId: number) {
     return this.bookService.returnBook({ id, userId });
   }
