@@ -22,7 +22,6 @@ import {
   ApiParam,
 } from '@nestjs/swagger';
 import { ClientGrpc } from '@nestjs/microservices';
-import { JwtAuthGuard } from '@app/guards/jwt-auth.guard';
 import { GrpcResponseInterceptor } from '@app/interceptors/GrpcResponse.interceptor';
 import { BookService } from '@app/interfaces/book-service.interface';
 import {
@@ -31,7 +30,7 @@ import {
   ReturnBookDto,
   UpdateBookDto,
 } from '@app/dtos/books.dto';
-import { JwtAdminAuthGuard } from '@app/guards/jwt-admin-auth.guard';
+import { JwtAdminAuthGuard, JwtAuthGuard } from './guards';
 
 @ApiTags('books')
 @Controller('books')

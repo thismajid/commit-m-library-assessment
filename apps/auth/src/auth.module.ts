@@ -6,7 +6,7 @@ import { AuthService } from './auth.service';
 import mainConfig from './configs/main.config';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { UserService } from './user.service';
-import { JwtService } from '@nestjs/jwt';
+import { JwtModule, JwtService } from '@nestjs/jwt';
 
 @Module({
   imports: [

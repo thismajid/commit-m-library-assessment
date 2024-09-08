@@ -4,10 +4,16 @@ import { lastValueFrom } from 'rxjs';
 import * as bcrypt from 'bcryptjs';
 import * as jwt from 'jsonwebtoken';
 import { User } from '@app/interfaces/user.interface';
+import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly jwtService: JwtService,
+    private readonly configService: ConfigService,
+  ) {}
 
   async register(data: {
     name: string;
@@ -58,7 +64,16 @@ export class AuthService {
   }
 
   private generateToken(userId: number, role: string): string {
-    return jwt.sign({ userId, role }, 'your-secret-key', { expiresIn: '1d' });
+    const secretKey = this.configService.get<string>('mainConfig.JWT_SECRET');
+    const expiresIn = this.configService.get<string>(
+      'mainConfig.JWT_EXPIRATION',
+      '1d',
+    );
+
+    return this.jwtService.sign(
+      { userId, role },
+      { secret: secretKey, expiresIn },
+    );
   }
 
   verifyToken(token: string): any {

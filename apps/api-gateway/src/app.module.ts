@@ -11,13 +11,21 @@ import { BookController } from './book.controller';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      isGlobal: true, // Makes the configuration globally available
+      isGlobal: true,
       envFilePath: join(process.cwd(), 'apps', 'api-gateway', '.env'),
       load: [mainConfig],
     }),
-    JwtModule.register({
-      secret: process.env.JWT_SECRET, // Replace with your JWT secret key
-      signOptions: { expiresIn: '3600s' }, // Token expiration time
+    JwtModule.registerAsync({
+      useFactory: (configService: ConfigService) => ({
+        secret: configService.get<string>('mainConfig.JWT_SECRET'),
+        signOptions: {
+          expiresIn: configService.get<string>(
+            'mainConfig.JWT_EXPIRATION',
+            '1d',
+          ),
+        },
+      }),
+      inject: [ConfigService],
     }),
     ClientsModule.registerAsync([
       {

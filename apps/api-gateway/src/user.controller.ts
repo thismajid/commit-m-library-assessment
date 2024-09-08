@@ -16,10 +16,10 @@ import {
   ApiBearerAuth,
 } from '@nestjs/swagger';
 import { ClientGrpc } from '@nestjs/microservices';
-import { JwtAuthGuard } from '@app/guards/jwt-auth.guard';
 import { GrpcResponseInterceptor } from '@app/interceptors/GrpcResponse.interceptor';
 import { UserService } from '@app/interfaces/user-service.interface';
 import { UpdateProfileDto } from '@app/dtos/users.dto';
+import { JwtAuthGuard } from './guards';
 
 @ApiTags('users')
 @Controller('users')

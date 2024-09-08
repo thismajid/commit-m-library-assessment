@@ -4,13 +4,17 @@ import {
   ExecutionContext,
   UnauthorizedException,
 } from '@nestjs/common';
-import * as jwt from 'jsonwebtoken';
+import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
-  private readonly JWT_SECRET = 'your-secret-key';
+  constructor(
+    private readonly jwtService: JwtService,
+    private readonly configService: ConfigService,
+  ) {}
 
-  canActivate(context: ExecutionContext): boolean | Promise<boolean> {
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
     const token = this.extractTokenFromRequest(request);
 
@@ -19,8 +23,11 @@ export class JwtAuthGuard implements CanActivate {
     }
 
     try {
-      const decoded = this.verifyToken(token);
-      request.user = decoded; // Attach user information to the request object
+      const secretKey = this.configService.get<string>('mainConfig.JWT_SECRET');
+      const decoded = await this.jwtService.verifyAsync(token, {
+        secret: secretKey,
+      });
+      request.user = decoded;
       return true;
     } catch (err) {
       throw new UnauthorizedException('Invalid token');
@@ -33,10 +40,6 @@ export class JwtAuthGuard implements CanActivate {
       return null;
     }
 
-    return authHeader.split(' ')[1]; // Assuming 'Bearer <token>' format
-  }
-
-  private verifyToken(token: string): any {
-    return jwt.verify(token, this.JWT_SECRET);
+    return authHeader.split(' ')[1];
   }
 }
