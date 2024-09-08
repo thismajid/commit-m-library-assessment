@@ -44,6 +44,10 @@ message Book {
   int32 userId = 6;
 }
 
+message ListBooks {
+  repeated Book books = 1;
+  int32 total = 2;
+}
 
 message ListBooksRequest {
   int32 page = 1;
@@ -51,8 +55,9 @@ message ListBooksRequest {
 }
 
 message ListBooksResponse {
-  repeated Book books = 1;
-  int32 total = 2;
+  bool success = 1;
+  string message = 2;
+  ListBooks data = 3;
 }
 
 message GetBookRequest {

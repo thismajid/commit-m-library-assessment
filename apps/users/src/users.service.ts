@@ -51,32 +51,16 @@ export class UsersService {
 
   async getProfile(
     id: number,
-  ): Promise<ServiceResponse<{ id: number; username: string; name: string }>> {
+  ): Promise<{ id: number; username: string; name: string }> {
     const user = await this.usersRepository.findOne(id);
-    return {
-      success: true,
-      message: 'User profile fetch successfully',
-      data: {
-        id: user.id,
-        username: user.username,
-        name: user.name,
-      },
-    };
+    return user;
   }
 
   async updateProfile(
     id: number,
     name: string,
-  ): Promise<ServiceResponse<{ id: number; username: string; name: string }>> {
+  ): Promise<{ id: number; username: string; name: string }> {
     const updatedUser = await this.usersRepository.update(id, { name });
-    return {
-      success: true,
-      message: 'User profile updated successfully',
-      data: {
-        id: updatedUser.id,
-        username: updatedUser.username,
-        name: updatedUser.name,
-      },
-    };
+    return updatedUser;
   }
 }

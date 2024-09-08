@@ -43,7 +43,12 @@ export class UsersController {
   async getProfile(data: {
     id: number;
   }): Promise<ServiceResponse<{ id: number; username: string; name: string }>> {
-    return this.userService.getProfile(data.id);
+    const result = await this.userService.getProfile(data.id);
+    return {
+      success: true,
+      message: 'User profile fetch successfully',
+      data: result,
+    };
   }
 
   @GrpcMethod('UserService', 'UpdateUserProfile')
@@ -52,6 +57,11 @@ export class UsersController {
     id: number;
     name: string;
   }): Promise<ServiceResponse<{ id: number; username: string; name: string }>> {
-    return this.userService.updateProfile(data.id, data.name);
+    const result = await this.userService.updateProfile(data.id, data.name);
+    return {
+      success: true,
+      message: 'User profile fetch successfully',
+      data: result,
+    };
   }
 }

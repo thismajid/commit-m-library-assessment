@@ -1,7 +1,6 @@
 import { Controller } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { GrpcMethod, Payload } from '@nestjs/microservices';
-import { Observable } from 'rxjs';
+import { GrpcMethod } from '@nestjs/microservices';
 import { ServiceResponse } from '@app/interfaces/response.interface';
 
 @Controller()
@@ -14,7 +13,12 @@ export class AuthController {
     username: string;
     password: string;
   }): Promise<ServiceResponse<{ id: number; username: string }>> {
-    return this.authService.register(data);
+    const result = await this.authService.register(data);
+    return {
+      success: true,
+      message: 'User registered successfully',
+      data: result,
+    };
   }
 
   @GrpcMethod('AuthService', 'Login')
@@ -22,7 +26,12 @@ export class AuthController {
     username: string;
     password: string;
   }): Promise<ServiceResponse<{ accessToken: string }>> {
-    return this.authService.login(data);
+    const result = await this.authService.login(data);
+    return {
+      success: true,
+      message: 'User login successfully',
+      data: result,
+    };
   }
 
   @GrpcMethod('AuthService', 'Authenticate')

@@ -63,7 +63,7 @@ export class BookController {
 
   @Get()
   @ApiOperation({ summary: 'List all books' })
-  @ApiResponse({ status: 200, description: 'Returns a list of books' })
+  @ApiResponse({ status: 200, description: 'Books retrieved successfully' })
   @ApiQuery({
     name: 'page',
     required: false,
@@ -84,7 +84,7 @@ export class BookController {
   @ApiOperation({ summary: 'Search books' })
   @ApiResponse({
     status: 200,
-    description: 'Returns a list of books matching the search query',
+    description: 'Books searching retrieved successfully',
   })
   @ApiQuery({
     name: 'query',
