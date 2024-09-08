@@ -54,7 +54,8 @@ export class AuthService {
       return { success: false, message: 'Invalid password' };
     }
 
-    const token = this.generateToken(user.id);
+    const token = this.generateToken(user.id, user.role);
+
     return {
       success: true,
       message: 'Login successful',
@@ -62,8 +63,8 @@ export class AuthService {
     };
   }
 
-  private generateToken(userId: number): string {
-    return jwt.sign({ userId }, 'your-secret-key', { expiresIn: '1d' });
+  private generateToken(userId: number, role: string): string {
+    return jwt.sign({ userId, role }, 'your-secret-key', { expiresIn: '1d' });
   }
 
   verifyToken(token: string): any {

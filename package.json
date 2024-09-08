@@ -106,7 +106,8 @@
       "^@app/decorators(|/.*)$": "<rootDir>/libs/decorators/src/$1",
       "^@app/database(|/.*)$": "<rootDir>/libs/database/src/$1",
       "^@app/interceptors(|/.*)$": "<rootDir>/libs/interceptors/src/$1",
-      "^@app/filters(|/.*)$": "<rootDir>/libs/filters/src/$1"
+      "^@app/filters(|/.*)$": "<rootDir>/libs/filters/src/$1",
+      "^@app/exceptions(|/.*)$": "<rootDir>/libs/exceptions/src/$1"
     }
   }
 }

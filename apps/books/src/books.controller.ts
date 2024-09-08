@@ -2,6 +2,8 @@
 import { Controller } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
 import { BooksService } from './books.service';
+import { ServiceResponse } from '@app/interfaces/response.interface';
+import { Book } from './generated/prisma-client-books';
 
 @Controller()
 export class BooksController {
@@ -13,7 +15,7 @@ export class BooksController {
     author: string;
     category: string;
     userId: number;
-  }) {
+  }): Promise<ServiceResponse<Book>> {
     return this.booksService.addBook(data);
   }
 
@@ -23,7 +25,7 @@ export class BooksController {
   }
 
   @GrpcMethod('BookService', 'GetBook')
-  async getBook(data: { id: number }) {
+  async getBook(data: { id: number }): Promise<ServiceResponse<Book>> {
     return this.booksService.getBook(data.id);
   }
 
@@ -34,7 +36,7 @@ export class BooksController {
     author: string;
     category: string;
     userId: number;
-  }) {
+  }): Promise<ServiceResponse<Book>> {
     return this.booksService.updateBook(data);
   }
 

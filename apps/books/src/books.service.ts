@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { BookRepository } from './repositories/book.repository';
 import { BorrowingRepository } from './repositories/borrowing.repository';
+import { Book } from './generated/prisma-client-books';
+import { ServiceResponse } from '@app/interfaces/response.interface';
 
 @Injectable()
 export class BooksService {
@@ -14,11 +16,17 @@ export class BooksService {
     author: string;
     category: string;
     userId: number;
-  }) {
-    return this.bookRepository.create({
+  }): Promise<ServiceResponse<Book>> {
+    const newBook = await this.bookRepository.create({
       ...data,
       isAvailable: true,
     });
+
+    return {
+      success: true,
+      message: 'Book added successfully',
+      data: newBook,
+    };
   }
 
   async listBooks({ page, limit }: { page: number; limit: number }) {
@@ -30,8 +38,14 @@ export class BooksService {
     return { books, total };
   }
 
-  async getBook(id: number) {
-    return await this.bookRepository.findOne(id);
+  async getBook(id: number): Promise<ServiceResponse<Book>> {
+    const book = await this.bookRepository.findOne(id);
+
+    return {
+      success: true,
+      message: 'Book retrieved successfully',
+      data: book,
+    };
   }
 
   async updateBook(data: {
@@ -40,24 +54,41 @@ export class BooksService {
     author: string;
     category: string;
     userId: number;
-  }) {
+  }): Promise<ServiceResponse<Book>> {
     const hasBook = await this.checkBookIsForUser(data.id, data.userId);
 
     if (!hasBook) {
-      return { success: false, message: 'Book not found by this id' };
+      return {
+        success: false,
+        message: 'Book not found by this id',
+      };
     }
 
-    return await this.bookRepository.update(data.id, data);
+    const updatedBook = await this.bookRepository.update(data.id, data);
+
+    return {
+      success: true,
+      message: 'Book updated successfully',
+      data: updatedBook,
+    };
   }
 
-  async deleteBook(data: { id: number; userId: number }) {
+  async deleteBook(data: {
+    id: number;
+    userId: number;
+  }): Promise<ServiceResponse<null>> {
     const hasBook = await this.checkBookIsForUser(data.id, data.userId);
 
     if (!hasBook) {
       return { success: false, message: 'Book not found by this id' };
     }
 
-    return await this.bookRepository.remove(data.id);
+    await this.bookRepository.remove(data.id);
+
+    return {
+      success: true,
+      message: 'Book deleted successfully',
+    };
   }
 
   async searchBooks({
@@ -89,7 +120,10 @@ export class BooksService {
     return { books, total };
   }
 
-  async borrowBook(data: { id: number; userId: number }) {
+  async borrowBook(data: {
+    id: number;
+    userId: number;
+  }): Promise<ServiceResponse<null>> {
     const book = await this.bookRepository.findOne(data.id);
 
     if (!book || !book.isAvailable) {
@@ -106,7 +140,10 @@ export class BooksService {
     return { success: true, message: 'Book borrowed successfully' };
   }
 
-  async returnBook(data: { id: number; userId: number }) {
+  async returnBook(data: {
+    id: number;
+    userId: number;
+  }): Promise<ServiceResponse<null>> {
     const borrowing = await this.borrowingRepository.findUserBookBorrowing(
       data.id,
       data.userId,

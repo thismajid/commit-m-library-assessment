@@ -21,6 +21,12 @@ message AddBookRequest {
 }
 
 message AddBookResponse {
+  bool success = 1;
+  string message = 2;
+  BookData data = 3;
+}
+
+message BookData {
   int32 id = 1;
   string title = 2;
   string author = 3;
@@ -54,12 +60,9 @@ message GetBookRequest {
 }
 
 message GetBookResponse {
-  int32 id = 1;
-  string title = 2;
-  string author = 3;
-  string category = 4;
-  bool isAvailable = 5;
-  int32 userId = 6;
+  bool success = 1;
+  string message = 2;
+  Book data = 3;
 }
 
 message UpdateBookRequest {
@@ -70,12 +73,21 @@ message UpdateBookRequest {
   int32 userId = 5;
 }
 
+message UpdateBookResponse {
+  bool success = 1;
+  string message = 2;
+  Book data = 3;
+}
+
 message DeleteBookRequest {
   int32 id = 1;
   int32 userId = 2;
 }
 
-message DeleteBookResponse {}
+message DeleteBookResponse {
+  bool success = 1;
+  string message = 2;
+}
 
 message SearchBooksRequest {
   string query = 1;

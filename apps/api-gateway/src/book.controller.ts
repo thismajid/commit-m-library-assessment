@@ -31,6 +31,7 @@ import {
   ReturnBookDto,
   UpdateBookDto,
 } from '@app/dtos/books.dto';
+import { JwtAdminAuthGuard } from '@app/guards/jwt-admin-auth.guard';
 
 @ApiTags('books')
 @Controller('books')
@@ -114,17 +115,18 @@ export class BookController {
   @Get(':id')
   @ApiOperation({ summary: 'Get a book' })
   @ApiParam({ name: 'id', type: 'string', description: 'The ID of the book' })
-  @ApiResponse({ status: 200, description: 'Returns a book' })
+  @ApiResponse({ status: 200, description: 'Book retrieved successfully' })
   getBook(@Param('id') id: number) {
     return this.bookService.getBook({ id });
   }
 
   @Put(':id')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAdminAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Update a book' })
   @ApiParam({ name: 'id', type: 'string', description: 'The ID of the book' })
   @ApiResponse({ status: 200, description: 'Book updated successfully' })
+  @ApiResponse({ status: 400, description: 'Book not found by this id' })
   @ApiBody({ type: UpdateBookDto })
   updateBook(
     @Req() req,
@@ -139,7 +141,7 @@ export class BookController {
   }
 
   @Delete(':id')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAdminAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Delete a book' })
   @ApiParam({ name: 'id', type: 'string', description: 'The ID of the book' })

@@ -39,6 +39,7 @@ message GetUserByUsernameResponse {
   string name = 2;
   string username = 3;
   string password = 4;
+  string role = 5;
 }
 
 
