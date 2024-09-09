@@ -28,16 +28,14 @@ async function bootstrap() {
     .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('/docs', app, document);
+  SwaggerModule.setup('/api/docs', app, document);
 
   const appHost = configService.get<string>('APP_HOST');
   const appPort = configService.get<number>('APP_PORT', 3000);
 
   await app.listen(appPort, () => {
     console.log(`Server is running on: http://${appHost}:${appPort}`);
-    console.log(
-      `Swagger is accessible on: http://${appHost}:${appPort}/api/docs`,
-    );
+    console.log(`Swagger is accessible on: http://${appHost}:${appPort}/docs`);
   });
 }
 bootstrap();
