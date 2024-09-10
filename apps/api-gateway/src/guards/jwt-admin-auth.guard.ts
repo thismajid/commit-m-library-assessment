@@ -6,7 +6,6 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { UserRole } from 'apps/users/src/generated/prisma-client-users';
 
 @Injectable()
 export class JwtAdminAuthGuard implements CanActivate {
@@ -29,7 +28,7 @@ export class JwtAdminAuthGuard implements CanActivate {
         secret: secretKey,
       });
 
-      if (decoded.role !== UserRole.ADMIN) {
+      if (decoded.role !== 'ADMIN') {
         throw new UnauthorizedException('Access denied. Admins only.');
       }
 

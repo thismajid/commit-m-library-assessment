@@ -1,16 +1,28 @@
 /* eslint-disable prettier/prettier */
 import { IsNotEmpty, IsString, MinLength } from 'class-validator';
 
-export class UserRegisterDto {
+export class RegisterDto {
+  @IsString()
   @IsNotEmpty()
   name: string;
 
-  @IsNotEmpty()
   @IsString()
-  @MinLength(5)
+  @IsNotEmpty()
   username: string;
 
-  @IsNotEmpty()
   @IsString()
+  @IsNotEmpty()
+  @MinLength(6)
+  password: string;
+}
+
+export class LoginDto {
+  @IsString()
+  @IsNotEmpty()
+  username: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @MinLength(6)
   password: string;
 }
