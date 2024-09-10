@@ -7,7 +7,7 @@ services:
       - NODE_ENV=production
       - APP_HOST=localhost
       - APP_PORT=4000
-      - GLOBAL_PREFIX=api
+      - GLOBAL_PREFIX=api/v1
       - AUTH_GRPC_URL=localhost:8001
       - USERS_GRPC_URL=localhost:8002
       - BOOKS_GRPC_URL=localhost:8003
