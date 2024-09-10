@@ -50,6 +50,17 @@ docker-compose up
 http://localhost:3000/api/v1/docs
 ```
 
+## Admin User Information
+
+### Admin Account Setup:
+
+By default, the application creates an admin user during the initial first setup.
+
+### Default Admin Credentials:
+
+Username: admin
+Password: strongAdminPassword
+
 ## API Endpoints
 
 For detailed API documentation, refer to the Swagger docs at `/api/v1/docs`.
