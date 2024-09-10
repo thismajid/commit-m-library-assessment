@@ -1,73 +1,111 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# Commit-m Assessments
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+This project is a monorepo NestJS application implemented as microservices with PostgreSQL integration.
+It consists of four services: api-gateway, auth, users, and books.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Features
 
-## Description
+- Book Listing: Users should be able to list all books available in the library.
+- Book Addition: Users should be able to add new books to the library.
+- Book Update: Admin should be able to update existing book information.
+- Book Deletion: Admin should be able to delete books from the library.
+- User Management: Implement basic user management functionalities (e.g., registration, authentication).
+- Book Borrowing and Returning: Add functionalities for users to borrow and return books.
+- Book Search: Implement search functionality to allow users to search for books by title, author, or category.
+- Book Availability: Show the availability status of each book (e.g. is available or not).
+- User Profile: Provide endpoints for users to view and update their profile information.
+- PostgreSQL database integration
+- Docker containerization
+- API documentation with Swagger
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Prerequisites
 
-## Installation
+- Docker and Docker Compose
+- Node.js (for local development)
+- PostgreSQL (for local development without Docker)
 
-```bash
-$ npm install
-```
+## Running the Project With Docker
 
-## Running the app
+1. Clone the repository:
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+git clone https://github.com/thismajid/commit-m-library-assessment.git
 ```
 
-## Test
+2. Navigate to the project directory:
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+cd commit-m-library-assessment
 ```
 
-## Support
+3. Start project:
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+```bash
+docker-compose up
+```
 
-## Stay in touch
+4. Open this url on browser:
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+```bash
+http://localhost:3000/api/docs
+```
 
-## License
+## Running the Project Without Docker
 
-Nest is [MIT licensed](LICENSE).
+To run this project locally without using Docker, follow these steps:
+
+1. Ensure you have Node.js and npm installed on your system. You can download them from [nodejs.org](https://nodejs.org/).
+
+2. Make sure you have MongoDB installed and running on your local machine. If not, you can download it from [mongodb.com](https://www.mongodb.com/try/download/community).
+
+3. Clone the repository:
+
+```bash
+git clone https://github.com/thismajid/sepehrsaya-assessments
+```
+
+4. Navigate to the project directory:
+
+```bash
+cd sepehrsaya-assessments
+```
+
+5. Install the project dependencies:
+
+```bash
+npm install
+```
+
+6. Create a `.env` file in the root directory of the project. You can copy the `.env.example` file and modify it as needed:
+
+```bash
+cp .env.example .env
+```
+
+7. Open the `.env` file and update the `MONGODB_URL` to point to your local MongoDB instance:
+
+```bash
+MONGODB_URL=mongodb://localhost:27017/sepehrsaya
+```
+
+8. Start the server
+
+```bash
+npm start
+```
+
+9.  The server should now be running. By default, it will be available at:
+
+```bash
+http://localhost:3000/api/v1/docs
+```
+
+## API Endpoints
+
+- POST /api/v1/auth/login - User login
+- GET /api/v1/users - Get all users
+- GET /api/v1/users/:id - Get a specific user
+- PATCH /api/v1/users/:id - Update a user
+- DELETE /api/v1/users/:id - Delete a user
+
+For detailed API documentation, refer to the Swagger docs at `/api/v1/docs`.

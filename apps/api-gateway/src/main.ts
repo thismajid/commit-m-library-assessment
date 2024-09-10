@@ -14,7 +14,7 @@ async function bootstrap() {
 
   const configService = app.get(ConfigService);
 
-  const globalPrefix = configService.get<string>('GLOBAL_PREFIX', 'api');
+  const globalPrefix = configService.get<string>('GLOBAL_PREFIX', 'api/v1');
 
   app.useGlobalPipes(new ValidationPipe());
 
@@ -28,7 +28,7 @@ async function bootstrap() {
     .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('/api/docs', app, document);
+  SwaggerModule.setup(`${globalPrefix}/docs`, app, document);
 
   const appHost = configService.get<string>('APP_HOST');
   const appPort = configService.get<number>('APP_PORT', 3000);
